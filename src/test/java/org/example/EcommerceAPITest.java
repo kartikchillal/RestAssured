@@ -26,7 +26,8 @@ public class EcommerceAPITest {
         loginRequest.setUserEmail("kartikchillalk@gmail.com");
         loginRequest.setUserPassword("KkCc9@KkCc9@");
 
-        RequestSpecification reqLogin = given().log().all().spec(req).body(loginRequest);
+        //inorder to bypass HTTPS and SSL certifications use relaxedHTTPSValidation method
+        RequestSpecification reqLogin = given().relaxedHTTPSValidation().log().all().spec(req).body(loginRequest);
 
         LoginResponse loginResponse = reqLogin.when().post("/api/ecom/auth/login")
                 .then().log().all().assertThat().spec(res).extract().response().as(LoginResponse.class);
@@ -42,7 +43,7 @@ public class EcommerceAPITest {
         RequestSpecification addProductBaseReq = new RequestSpecBuilder().setBaseUri("https://rahulshettyacademy.com").addHeader("Authorization", token).build();
         ResponseSpecification addProductBaseRes= new ResponseSpecBuilder().expectStatusCode(201).expectContentType(ContentType.JSON).build();
 
-        RequestSpecification reqAddProduct = given().log().all().spec(addProductBaseReq).param("productName", "black-white")
+        RequestSpecification reqAddProduct = given().relaxedHTTPSValidation().log().all().spec(addProductBaseReq).param("productName", "black-white")
                 .param("productAddedBy", userId)
                 .param("productCategory", "fashion")
                 .param("productSubCategory", "shirts")
@@ -75,7 +76,7 @@ public class EcommerceAPITest {
         Orders orders=new Orders();
         orders.setOrders(orderDetailList);
 
-        RequestSpecification createOrderReq = given().log().all().spec(createOrderBaseReq).body(orders);
+        RequestSpecification createOrderReq = given().relaxedHTTPSValidation().log().all().spec(createOrderBaseReq).body(orders);
 
         String responseAddOrder = createOrderReq.when().post("/api/ecom/order/create-order")
                 .then().log().all().spec(createOrderBaseRes).extract().response().asString();
@@ -85,7 +86,7 @@ public class EcommerceAPITest {
         RequestSpecification deleteProductBaseReq= new RequestSpecBuilder().setBaseUri("https://rahulshettyacademy.com").addHeader("Authorization",token).build();
         ResponseSpecification deleteProductBaseRes= new ResponseSpecBuilder().expectStatusCode(200).expectContentType(ContentType.JSON).build();
 
-        RequestSpecification deleteProdReq = given().log().all().spec(deleteProductBaseReq).pathParam("productId", productId);
+        RequestSpecification deleteProdReq = given().relaxedHTTPSValidation().log().all().spec(deleteProductBaseReq).pathParam("productId", productId);
         String deleteResponse = deleteProdReq.when().delete("/api/ecom/product/delete-product/{productId}")
                 .then().log().all().spec(deleteProductBaseRes).extract().response().asString();
         JsonPath js1=new JsonPath(deleteResponse);
